@@ -30,6 +30,7 @@ async function run() {
     const servicesCollection = client
       .db("ServicesCollection")
       .collection("Services");
+    const orderCollection = client.db("orderCollection").collection("orders");
     app.get("/services", async (req, res) => {
       const query = {};
       const cursor = await servicesCollection.find(query);
@@ -40,6 +41,44 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await servicesCollection.findOne(query);
+      res.send(result);
+    });
+
+    // app.get("/orders", async (req, res) => {
+    //   let query = {};
+
+    //   if (req.query.email) {
+    //     query = {
+    //       email: req.query.email,
+    //     };
+    //   }
+    //   const cursor = orderCollection.find(query);
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // });
+
+    // orders api
+    app.get("/orders", async (req, res) => {
+      let query = {};
+      if (req.query.email) {
+        query = {
+          email: req.query.email,
+        };
+      }
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
+
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.send(result);
+    });
+
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
       res.send(result);
     });
   } finally {
