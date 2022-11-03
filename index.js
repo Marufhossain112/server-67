@@ -27,16 +27,19 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const servicesCollection = client.db("ServicesCollection").collection("Services");
-    const query = {};
-    const cursor = await servicesCollection.find(query);
-
+    const servicesCollection = client
+      .db("ServicesCollection")
+      .collection("Services");
+    app.get("/services", async (req, res) => {
+      const query = {};
+      const cursor = await servicesCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
   } finally {
   }
 }
-run()
-  .then((res) => res.json())
-  .then((data) => console.log(data));
+run().then((err) => console.error(err));
 
 // listen to the server
 app.listen(port, () => {
